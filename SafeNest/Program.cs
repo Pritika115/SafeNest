@@ -4,10 +4,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddRazorPages();
 
-// Register repository as a Singleton
-builder.Services.AddSingleton(new Repository(
-    builder.Configuration.GetConnectionString("Default")
-));
+// Register Repository (SQLite)
+builder.Services.AddSingleton<Repository>(provider =>
+{
+    string dbPath = Path.Combine(AppContext.BaseDirectory, "safenest.db");
+    string conn = $"Data Source={dbPath}";
+    return new Repository(conn);
+});
 
 var app = builder.Build();
 
