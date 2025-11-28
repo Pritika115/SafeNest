@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36109.1 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SafeNest", "SafeNest\SafeNest.csproj", "{53F85E5C-F9F3-4DB1-9D7E-4843DAF5CE0A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{53F85E5C-F9F3-4DB1-9D7E-4843DAF5CE0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53F85E5C-F9F3-4DB1-9D7E-4843DAF5CE0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53F85E5C-F9F3-4DB1-9D7E-4843DAF5CE0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53F85E5C-F9F3-4DB1-9D7E-4843DAF5CE0A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {76DABE14-A4FA-47CB-A3F2-CE7CF5727222}
+	EndGlobalSection
+EndGlobal

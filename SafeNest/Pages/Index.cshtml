@@ -1,0 +1,32 @@
+﻿@page
+@model SafeNest.Pages.IndexModel
+
+<h2>SafeNest Demo – Check-in</h2>
+
+<form method="post" asp-page-handler="Add">
+    <button class="btn btn-primary">Add Sample Reading</button>
+</form>
+
+<br />
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Timestamp</th>
+            <th>Sensor</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var r in Model.Readings)
+        {
+            <tr>
+                <td>@r.Id</td>
+                <td>@r.Timestamp</td>
+                <td>@r.SensorType</td>
+                <td>@r.Value</td>
+            </tr>
+        }
+    </tbody>
+</table>
