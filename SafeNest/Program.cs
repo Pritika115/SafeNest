@@ -1,27 +1,25 @@
 var builder = WebApplication.CreateBuilder(args);
 
+// Add Razor Pages
 builder.Services.AddRazorPages();
-builder.Services.AddDataProtection();
+
+// Enable Session
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.IdleTimeout = TimeSpan.FromMinutes(60);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
 
 var app = builder.Build();
 
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Error");
-    app.UseHsts();
-}
-
-app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+
+// Session MUST come before MapRazorPages()
 app.UseSession();
-app.UseAuthorization();
+
 app.MapRazorPages();
+
 app.Run();

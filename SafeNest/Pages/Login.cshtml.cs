@@ -6,11 +6,11 @@ namespace SafeNest.Pages
     public class LoginModel : PageModel
     {
         [BindProperty]
-        public string Pin { get; set; }
+        public string Pin { get; set; } = string.Empty;
 
-        public string ErrorMessage { get; set; }
+        public string ErrorMessage { get; set; } = string.Empty;
 
-        private const string CorrectPin = "1234";   // FIXED PIN
+        private const string CorrectPin = "1234";
 
         public void OnGet()
         {

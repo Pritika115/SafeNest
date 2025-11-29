@@ -24,10 +24,9 @@ namespace SafeNest.Data
             var command = connection.CreateCommand();
             command.CommandText = @"
                 CREATE TABLE IF NOT EXISTS readings (
-                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    Timestamp DATETIME NOT NULL,
                     SensorType TEXT NOT NULL,
-                    Value REAL NOT NULL
+                    Value REAL NOT NULL,
+                    Time DATETIME NOT NULL
                 );
             ";
             command.ExecuteNonQuery();
@@ -41,21 +40,38 @@ namespace SafeNest.Data
             connection.Open();
 
             var command = connection.CreateCommand();
-            command.CommandText = "SELECT Id, Timestamp, SensorType, Value FROM readings";
+            command.CommandText = "SELECT SensorType, Value, Time FROM readings";
 
             using var reader = command.ExecuteReader();
             while (reader.Read())
             {
                 readings.Add(new SensorReading
                 {
-                    Id = reader.GetInt32(0),
-                    Timestamp = reader.GetDateTime(1),
-                    SensorType = reader.GetString(2),
-                    Value = reader.GetDouble(3)
+                    SensorType = reader.GetString(0),
+                    Value = reader.GetDouble(1),
+                    Time = reader.GetDateTime(2)
                 });
             }
 
             return readings;
+        }
+
+        // Optional: Add a reading to database
+        public void AddReading(SensorReading reading)
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText = @"
+                INSERT INTO readings (SensorType, Value, Time)
+                VALUES ($sensorType, $value, $time);
+            ";
+            command.Parameters.AddWithValue("$sensorType", reading.SensorType);
+            command.Parameters.AddWithValue("$value", reading.Value);
+            command.Parameters.AddWithValue("$time", reading.Time);
+
+            command.ExecuteNonQuery();
         }
     }
 }
