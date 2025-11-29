@@ -1,0 +1,17 @@
+﻿@page
+@model SafeNest.Pages.LoginModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="container mt-5">
+    <h2>Login</h2>
+    <form method="post">
+        <input type="password" asp-for="Pin" placeholder="Enter PIN" class="form-control mb-2" required />
+        <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <p class="text-danger mt-2">@Model.Message</p>
+    }
+</div>
