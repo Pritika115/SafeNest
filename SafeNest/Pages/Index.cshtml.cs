@@ -1,47 +1,68 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SafeNest.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace SafeNest.Pages
 {
     public class IndexModel : PageModel
     {
-        private const string EncryptedPinKey = "SafeNestUserPin";
+        [BindProperty]
+        [Required(ErrorMessage = "Sensor Type is required")]
+        public string SensorType { get; set; } = string.Empty;
 
-        public List<SensorReading> Readings { get; set; } = new();
+        [BindProperty]
+        [Required(ErrorMessage = "Sensor Value is required")]
+        [Range(0, 9999, ErrorMessage = "Enter a valid number between 0 and 9999")]
+        public double? SensorValue { get; set; }  // decimal values allowed
 
-        // Temporary in-memory storage (replace with Repository/DB later)
-        private static List<SensorReading> AllReadings = new List<SensorReading>
-        {
-            new SensorReading { Id = 1, Timestamp = DateTime.Now, SensorType = "Motion", Value = 0 },
-            new SensorReading { Id = 2, Timestamp = DateTime.Now, SensorType = "Temperature", Value = 25.5 }
-        };
+        public static List<SensorReading> Readings { get; set; } = new List<SensorReading>();
 
         public IActionResult OnGet()
         {
-            if (HttpContext.Session.GetString(EncryptedPinKey) == null)
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("LoggedIn")))
+            {
                 return RedirectToPage("/Login");
+            }
 
-            Readings = AllReadings;
             return Page();
         }
 
-        public IActionResult OnPostAddReading(string SensorType, double Value)
+        public IActionResult OnPost()
         {
-            if (HttpContext.Session.GetString(EncryptedPinKey) == null)
-                return RedirectToPage("/Login");
-
-            int newId = AllReadings.Count + 1;
-            AllReadings.Add(new SensorReading
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("LoggedIn")))
             {
-                Id = newId,
-                Timestamp = DateTime.Now,
+                return RedirectToPage("/Login");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return Page();
+            }
+
+            // Validate sensor type
+            var allowedSensors = new List<string> { "Motion", "Temperature", "Humidity", "Light" };
+            if (!allowedSensors.Contains(SensorType))
+            {
+                ModelState.AddModelError("SensorType", "Invalid sensor type. Allowed: Motion, Temperature, Humidity, Light.");
+                return Page();
+            }
+
+            if (SensorValue == null)
+            {
+                ModelState.AddModelError("SensorValue", "Sensor value is required.");
+                return Page();
+            }
+
+            // Add reading
+            Readings.Add(new SensorReading
+            {
                 SensorType = SensorType,
-                Value = Value
+                Value = SensorValue.Value,
+                Time = DateTime.Now
             });
 
-            Readings = AllReadings;
-            return Page();
+            return RedirectToPage();
         }
     }
 }
