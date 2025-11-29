@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.Sqlite;
 using SafeNest.Models;
+using System;
 using System.Collections.Generic;
 
 namespace SafeNest.Data
@@ -8,72 +9,53 @@ namespace SafeNest.Data
     {
         private readonly string _connectionString;
 
-        public Repository(string connectionString)
+        public Repository(string conn)
         {
-            _connectionString = connectionString;
-            Initialize();
+            _connectionString = conn;
+            EnsureDatabase();
         }
 
-        private void Initialize()
+        // Create table if it doesn't exist
+        private void EnsureDatabase()
         {
-            using var conn = new SqliteConnection(_connectionString);
-            conn.Open();
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
 
-            var cmd = conn.CreateCommand();
-            cmd.CommandText =
-            """
-            CREATE TABLE IF NOT EXISTS SensorReading (
-                Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                Timestamp TEXT NOT NULL,
-                SensorType TEXT NOT NULL,
-                Value REAL
-            );
-            """;
-            cmd.ExecuteNonQuery();
+            var command = connection.CreateCommand();
+            command.CommandText = @"
+                CREATE TABLE IF NOT EXISTS readings (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    Timestamp DATETIME NOT NULL,
+                    SensorType TEXT NOT NULL,
+                    Value REAL NOT NULL
+                );
+            ";
+            command.ExecuteNonQuery();
         }
 
-        public void Add(SensorReading r)
+        public List<SensorReading> GetReadings()
         {
-            using var conn = new SqliteConnection(_connectionString);
-            conn.Open();
+            var readings = new List<SensorReading>();
 
-            var cmd = conn.CreateCommand();
-            cmd.CommandText =
-            """
-            INSERT INTO SensorReading (Timestamp, SensorType, Value)
-            VALUES ($ts, $type, $val);
-            """;
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
 
-            cmd.Parameters.AddWithValue("$ts", r.Timestamp.ToString("o"));
-            cmd.Parameters.AddWithValue("$type", r.SensorType);
-            cmd.Parameters.AddWithValue("$val", r.Value);
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT Id, Timestamp, SensorType, Value FROM readings";
 
-            cmd.ExecuteNonQuery();
-        }
-
-        public List<SensorReading> GetAll()
-        {
-            var list = new List<SensorReading>();
-
-            using var conn = new SqliteConnection(_connectionString);
-            conn.Open();
-
-            var cmd = conn.CreateCommand();
-            cmd.CommandText = "SELECT Id, Timestamp, SensorType, Value FROM SensorReading ORDER BY Id;";
-
-            using var rdr = cmd.ExecuteReader();
-            while (rdr.Read())
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
             {
-                list.Add(new SensorReading
+                readings.Add(new SensorReading
                 {
-                    Id = rdr.GetInt32(0),
-                    Timestamp = DateTime.Parse(rdr.GetString(1)),
-                    SensorType = rdr.GetString(2),
-                    Value = rdr.GetDouble(3)
+                    Id = reader.GetInt32(0),
+                    Timestamp = reader.GetDateTime(1),
+                    SensorType = reader.GetString(2),
+                    Value = reader.GetDouble(3)
                 });
             }
 
-            return list;
+            return readings;
         }
     }
 }

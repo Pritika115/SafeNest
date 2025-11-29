@@ -1,40 +1,113 @@
 ﻿@page
 @model SafeNest.Pages.IndexModel
+@{
+    ViewData["Title"] = "SafeNest Dashboard";
+}
 
-<h1>Sensor Readings</h1>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
-<form method="post" class="form">
-    <label>Sensor Type:</label>
-    <input asp-for="NewSensorType" />
+<div class="container mt-5">
 
-    <label>Value:</label>
-    <input asp-for="NewSensorValue" type="number" step="0.1" />
+    <!-- Dashboard Title -->
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold">SafeNest Dashboard</h1>
+        <p class="text-muted">Monitor motion & sensor data in real-time</p>
+    </div>
 
-    <button type="submit">Add Reading</button>
-</form>
+    <div class="row g-4">
 
-<hr />
+        <!-- Motion Detection Card -->
+        <div class="col-md-6">
+            <div class="card shadow-sm border-success h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title"><i class="bi bi-wifi-2"></i> Motion Detection</h5>
+                    <button id="getLocationBtn" class="btn btn-success btn-lg my-3">
+                        <i class="bi bi-geo-alt-fill"></i> Get Current Location
+                    </button>
+                    <div id="locationOutput" class="alert alert-info small mt-3">No location yet</div>
+                </div>
+            </div>
+        </div>
 
-<h2>Saved Data</h2>
+        <!-- Add Sensor Reading Card -->
+        <div class="col-md-6">
+            <div class="card shadow-sm border-primary h-100">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-thermometer-half"></i> Add Sensor Reading</h5>
+                    <form method="post" asp-page-handler="AddReading">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Sensor Type</label>
+                            <input type="text" name="SensorType" class="form-control" placeholder="e.g., Motion" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Value</label>
+                            <input type="number" step="0.01" name="Value" class="form-control" placeholder="Enter value" required />
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-plus-circle"></i> Add Reading
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
 
-<table>
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Timestamp</th>
-            <th>Type</th>
-            <th>Value</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var r in Model.Readings)
-        {
-            <tr>
-                <td>@r.Id</td>
-                <td>@r.Timestamp</td>
-                <td>@r.SensorType</td>
-                <td>@r.Value</td>
-            </tr>
-        }
-    </tbody>
-</table>
+    </div>
+
+    <!-- Sensor Data Table -->
+    <div class="card shadow-sm border-secondary mt-4">
+        <div class="card-body">
+            <h5 class="card-title"><i class="bi bi-table"></i> Saved Sensor Data</h5>
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered table-hover table-sm mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Timestamp</th>
+                            <th>Sensor Type</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var reading in Model.Readings)
+                        {
+                            <tr>
+                                <td>@reading.Id</td>
+                                <td>@reading.Timestamp.ToString("g")</td>
+                                <td>@reading.SensorType</td>
+                                <td>@reading.Value</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script>
+        const btn = document.getElementById("getLocationBtn");
+        const output = document.getElementById("locationOutput");
+
+        btn.addEventListener("click", () => {
+            if (!navigator.geolocation) {
+                output.textContent = "Geolocation not supported by your browser";
+                output.className = "alert alert-danger small mt-3";
+            } else {
+                output.textContent = "Locating...";
+                output.className = "alert alert-warning small mt-3";
+                navigator.geolocation.getCurrentPosition(
+                    pos => {
+                        output.textContent = `Latitude: ${pos.coords.latitude.toFixed(6)}, Longitude: ${pos.coords.longitude.toFixed(6)}`;
+                        output.className = "alert alert-success small mt-3";
+                    },
+                    err => {
+                        output.textContent = "Unable to retrieve location";
+                        output.className = "alert alert-danger small mt-3";
+                    }
+                );
+            }
+        });
+    </script>
+}
