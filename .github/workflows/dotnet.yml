@@ -1,0 +1,35 @@
+name: SafeNest .NET CI
+
+# Trigger on push or pull request to main branch
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Checkout your repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2️⃣ Setup .NET SDK
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'  # change if your project uses another version
+
+      # 3️⃣ Restore dependencies
+      - name: Restore dependencies
+        run: dotnet restore
+
+      # 4️⃣ Build solution in Release mode
+      - name: Build solution
+        run: dotnet build --configuration Release --no-restore
+
+      # 5️⃣ Run all tests
+      - name: Run tests
+        run: dotnet test --no-build --verbosity normal
