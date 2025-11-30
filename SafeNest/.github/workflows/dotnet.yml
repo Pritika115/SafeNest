@@ -25,7 +25,8 @@ jobs:
       - name: Build solution
         run: dotnet build --configuration Release --no-restore
 
-      - name: Run tests (Linux compatible)
-        run: dotnet test --configuration Release --no-build --verbosity normal
+      - name: Run ONLY test project
+        run: dotnet test SafeNest.Tests/SafeNest.Tests.csproj --configuration Release --no-build --verbosity normal
+
 
 
