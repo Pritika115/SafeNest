@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-and-test:
-    runs-on: windows-latest  
+    runs-on: ubuntu-latest   
 
     steps:
     - name: Checkout repository
@@ -20,11 +20,10 @@ jobs:
         dotnet-version: '8.0.x'
 
     - name: Restore dependencies
-      run: dotnet restore SafeNest.sln  
+      run: dotnet restore
 
-    - name: Build
-      run: dotnet build SafeNest.sln --no-restore --configuration Release
+    - name: Build (Release)
+      run: dotnet build --no-restore --configuration Release
 
-    - name: Run tests
-      run: dotnet test SafeNest.Tests/SafeNest.Tests.csproj --no-build --configuration Release --verbosity normal
-      
+    - name: Run tests (Release)  
+      run: dotnet test --no-build --configuration Release --verbosity normal
