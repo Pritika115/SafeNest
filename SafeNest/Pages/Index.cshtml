@@ -7,6 +7,24 @@
 <div class="container mt-5">
     <h2 class="text-center mb-4">SafeNest Dashboard</h2>
 
+    <!-- WEATHER CARD -->
+    <div id="weatherCard" style="
+    background:#f1f5f9;
+    padding:20px;
+    margin-top:20px;
+    border-radius:12px;
+    width:300px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+">
+        <h2 style="margin-bottom:10px;">Local Weather</h2>
+
+        <p id="weatherStatus">Detecting your location...</p>
+        <p id="weatherTemp" style="font-size:24px; font-weight:bold;"></p>
+        <p id="weatherCity"></p>
+    </div>
+
+    <script src="/js/weather.js"></script>
+
     <!-- Motion Detection -->
     <div class="mb-4">
         <h4>Motion Detection</h4>
