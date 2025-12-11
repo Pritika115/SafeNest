@@ -1,0 +1,17 @@
+[
+  {
+    "SensorType": "Temperature",
+    "Value": 25,
+    "Time": "2025-12-11T09:49:27.5025039-05:00"
+  },
+  {
+    "SensorType": "Motion",
+    "Value": 55,
+    "Time": "2025-12-11T09:49:49.0331436-05:00"
+  },
+  {
+    "SensorType": "Light",
+    "Value": 200,
+    "Time": "2025-12-11T09:59:26.5984046-05:00"
+  }
+]

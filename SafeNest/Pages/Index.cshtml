@@ -5,84 +5,96 @@
 }
 
 <div class="container mt-5">
+
     <h2 class="text-center mb-4">SafeNest Dashboard</h2>
 
-    <!-- WEATHER CARD -->
-    <div id="weatherCard" style="
-    background:#f1f5f9;
-    padding:20px;
-    margin-top:20px;
-    border-radius:12px;
-    width:300px;
-    box-shadow:0 4px 10px rgba(0,0,0,0.1);
-">
-        <h2 style="margin-bottom:10px;">Local Weather</h2>
+    <div class="row">
+        <!-- LEFT COLUMN -->
+        <div class="col-md-5">
 
-        <p id="weatherStatus">Detecting your location...</p>
-        <p id="weatherTemp" style="font-size:24px; font-weight:bold;"></p>
-        <p id="weatherCity"></p>
-    </div>
+            <!-- WEATHER CARD -->
+            <div id="weatherCard" style="
+                background:#f1f5f9;
+                padding:20px;
+                border-radius:12px;
+                box-shadow:0 4px 10px rgba(0,0,0,0.1);
+                margin-bottom:25px;
+            ">
+                <h3 class="mb-2">Local Weather</h3>
 
-    <script src="/js/weather.js"></script>
-
-    <!-- Motion Detection -->
-    <div class="mb-4">
-        <h4>Motion Detection</h4>
-        <button id="getLocationBtn" class="btn btn-success">Get Current Location</button>
-        <p id="locationOutput" class="mt-2"></p>
-    </div>
-
-    <!-- Add Sensor Reading -->
-    <div class="mb-4">
-        <h4>Add Sensor Reading</h4>
-        <form method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-            <div class="form-group">
-                <label>Sensor Type</label>
-                <input asp-for="SensorType" class="form-control" placeholder="e.g., Motion" />
-                <span asp-validation-for="SensorType" class="text-danger"></span>
+                <p id="weatherStatus">Detecting your location...</p>
+                <p id="weatherTemp" style="font-size:24px; font-weight:bold;"></p>
+                <p id="weatherCity"></p>
             </div>
 
-            <div class="form-group mt-2">
-                <label>Sensor Value</label>
-                <input asp-for="SensorValue" class="form-control" placeholder="Enter value" />
-                <span asp-validation-for="SensorValue" class="text-danger"></span>
+            <!-- Motion Detection -->
+            <div class="mb-4">
+                <h4>Motion Detection</h4>
+                <button id="getLocationBtn" class="btn btn-success">Get Current Location</button>
+                <p id="locationOutput" class="mt-2"></p>
             </div>
 
-            <button type="submit" class="btn btn-primary mt-3">Add Reading</button>
-        </form>
-    </div>
+        </div>
 
-    <!-- Saved Sensor Data -->
-    <div>
-        <h4>Saved Sensor Data</h4>
-        <table class="table table-striped table-bordered">
-            <thead class="bg-dark text-white">
-                <tr>
-                    <th>Type</th>
-                    <th>Value</th>
-                    <th>Time</th> <!-- use Time property -->
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var reading in IndexModel.Readings)
-                {
+        <!-- RIGHT COLUMN -->
+        <div class="col-md-7">
+
+            <!-- Add Sensor -->
+            <div class="mb-4">
+                <h4>Add Sensor Reading</h4>
+
+                <form method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="form-group">
+                        <label>Sensor Type</label>
+                        <input asp-for="SensorType" class="form-control" placeholder="e.g., Motion" />
+                        <span asp-validation-for="SensorType" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mt-2">
+                        <label>Sensor Value</label>
+                        <input asp-for="SensorValue" class="form-control" placeholder="Enter value" />
+                        <span asp-validation-for="SensorValue" class="text-danger"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary mt-3">Add Reading</button>
+                </form>
+            </div>
+
+            <!-- Saved Sensor Data -->
+            <h4 class="mb-3">📊 Sensor Data Log</h4>
+
+            <table class="table table-striped table-bordered">
+                <thead class="bg-dark text-white">
                     <tr>
-                        <td>@reading.SensorType</td>
-                        <td>@reading.Value</td>
-                        <td>@reading.Time</td> <!-- display Time -->
+                        <th>Type</th>
+                        <th>Value</th>
+                        <th>Time</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var reading in Model.Readings)
+                    {
+                        <tr>
+                            <td>
+                                <span class="badge bg-primary">@reading.SensorType</span>
+                            </td>
+                            <td><strong>@reading.Value</strong></td>
+                            <td>@reading.Time.ToString("MMM dd yyyy • hh:mm tt")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        </div>
     </div>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 
-    <!-- Geolocation script -->
+    <!-- Geolocation Script -->
     <script>
         const btn = document.getElementById("getLocationBtn");
         const output = document.getElementById("locationOutput");
@@ -98,4 +110,6 @@
             }
         });
     </script>
+
+    <script src="/js/weather.js"></script>
 }
